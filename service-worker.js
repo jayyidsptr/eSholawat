@@ -1,4 +1,4 @@
-const CACHE = 'esh-w-v3';
+const CACHE = 'esh-w-v4';
 const urls = [
   'index.html',
   'styles.css?3',
