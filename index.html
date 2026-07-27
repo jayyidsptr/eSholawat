@@ -2,18 +2,71 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>e-Sholawat - Koleksi Lirik Sholawat</title>
-    <meta name="description" content="e-Sholawat adalah aplikasi untuk menyimpan dan berbagi foto lirik sholawat" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>e-Sholawat — Koleksi Lirik Sholawat</title>
+    <meta name="description" content="e-Sholawat: simpan, cari, dan bagikan foto lirik sholawat. Offline-friendly PWA." />
     <meta name="author" content="Putra" />
-    <link rel="manifest" href="/manifest.json" />
-    <script type="module" crossorigin src="/assets/index-D4Db8Szg.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-pYCD6hRp.css">
+    <meta name="app-ver" content="3" />
+    <meta name="theme-color" content="#1D4B4A" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="e-Sholawat" />
+    <meta property="og:title" content="e-Sholawat" />
+    <meta property="og:description" content="Koleksi lirik sholawat di genggaman Anda" />
+    <meta property="og:type" content="website" />
+    <base href="/eSholawat/">
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" href="favicon.ico" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+    <link rel="stylesheet" href="styles.css?3" />
   </head>
-
   <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <!-- <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script> -->
+    <div id="app">
+      <header class="app-header" id="app-header">
+        <a class="brand" href="#/" aria-label="e-Sholawat beranda">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-text">
+            <span class="brand-title">e-Sholawat</span>
+            <span class="brand-sub">Koleksi lirik sholawat</span>
+          </span>
+        </a>
+        <a class="icon-btn" href="#/search" aria-label="Cari sholawat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </a>
+      </header>
+
+      <main class="main">
+        <section id="page-home" class="page active" aria-label="Beranda"></section>
+        <section id="page-search" class="page" aria-label="Cari"></section>
+        <section id="page-bookmarks" class="page" aria-label="Favorit"></section>
+        <section id="page-upload" class="page" aria-label="Upload"></section>
+        <section id="page-detail" class="page" aria-label="Detail" style="margin:0 -16px"></section>
+      </main>
+
+      <nav class="bottom-nav" id="bottom-nav" aria-label="Navigasi utama">
+        <button type="button" class="nav-item active" data-route="home" aria-label="Beranda">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Beranda
+        </button>
+        <button type="button" class="nav-item" data-route="search" aria-label="Cari">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          Cari
+        </button>
+        <button type="button" class="nav-item" data-route="bookmarks" aria-label="Favorit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          Favorit
+        </button>
+        <button type="button" class="nav-item" data-route="upload" aria-label="Upload">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+          Upload
+        </button>
+      </nav>
+    </div>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+    <button type="button" class="btn-reload" id="btn-reload" aria-label="Reload halaman" title="Reload">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15.36-5.64L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15.36 5.64L3 16"/></svg>
+    </button>
+    <script src="app.js?3" defer></script>
   </body>
 </html>

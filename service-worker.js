@@ -1,112 +1,62 @@
-
-const CACHE_NAME = 'sholawat-keeper-v1';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+const CACHE = 'esh-w-v3';
+const urls = [
+  'index.html',
+  'styles.css?3',
+  'app.js?3',
+  'manifest.json',
+  'favicon.ico',
+  'icons/icon-192x192.png',
+  'icons/icon-512x512.png',
 ];
 
-// Cache image blobs for offline use
-const CACHE_DYNAMIC_NAME = 'sholawat-keeper-dynamic-v1';
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      })
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open(CACHE).then((c) => c.addAll(urls)).then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('fetch', (event) => {
-  const url = new URL(event.request.url);
-  
-  // For local storage API endpoints that use localStorage
-  if (url.pathname.includes('api')) {
+self.addEventListener('activate', (e) => {
+  e.waitUntil(
+    Promise.all([
+      caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))),
+      self.clients.claim(),
+    ])
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  const u = new URL(e.request.url);
+
+  // network-first for HTML
+  if (e.request.mode === 'navigate') {
+    e.respondWith(fetch(e.request).catch(() => caches.match('index.html')));
     return;
   }
-  
-  // For navigation requests
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          return caches.match('/');
-        })
+
+  // Cloudinary images — cache-first for offline
+  if (u.hostname.includes('cloudinary.com') || u.hostname.includes('res.cloudinary.com')) {
+    e.respondWith(
+      caches.open(CACHE).then(async (c) => {
+        const hit = await c.match(e.request);
+        if (hit) return hit;
+        try {
+          const res = await fetch(e.request);
+          if (res.ok) c.put(e.request, res.clone());
+          return res;
+        } catch {
+          return hit || new Response('', { status: 503 });
+        }
+      })
     );
     return;
   }
 
-  // For image requests - cache them dynamically
-  if (event.request.destination === 'image') {
-    event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-
-        return fetch(event.request)
-          .then((response) => {
-            // Check if we received a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone the response
-            const responseToCache = response.clone();
-
-            caches.open(CACHE_DYNAMIC_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          })
-          .catch(() => {
-            // If an image can't be fetched, you could return a placeholder
-            // return caches.match('/placeholder.svg');
-          });
-      })
-    );
-    return;
-  }
-  
-  // For all other requests
-  event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-      .catch(() => {
-        // Fallback for when the network is completely unavailable
-        if (event.request.url.indexOf('/api/') !== -1) {
-          return new Response(JSON.stringify({ error: 'Network unavailable' }), {
-            status: 503,
-            headers: { 'Content-Type': 'application/json' }
-          });
-        }
-      })
-  );
-});
-
-// Clean up old caches
-self.addEventListener('activate', (event) => {
-  const cacheWhitelist = [CACHE_NAME, CACHE_DYNAMIC_NAME];
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+  // app shell — cache-first
+  e.respondWith(
+    caches.match(e.request).then((r) => r || fetch(e.request).catch(() => {
+      if (u.pathname.startsWith('/api/')) {
+        return new Response('{"error":"offline"}', { status: 503, headers: { 'Content-Type': 'application/json' } });
+      }
+    }))
   );
 });

@@ -1,12 +1,13 @@
-
 {
-  "name": "Sholawat Keeper",
-  "short_name": "Sholawat",
-  "description": "Aplikasi untuk menyimpan dan berbagi foto lirik sholawat",
-  "start_url": "/",
+  "name": "e-Sholawat",
+  "short_name": "e-Sholawat",
+  "scope": ".",
+  "description": "Simpan, cari, dan bagikan foto lirik sholawat",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#E5DAC6",
+  "background_color": "#F6F1E7",
   "theme_color": "#1D4B4A",
+  "lang": "id",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
